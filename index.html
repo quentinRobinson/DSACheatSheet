@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>C# DSA Pattern Recognition Cheat Sheet</title>
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-clike.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-csharp.min.js"></script>
+<style>
+  :root {
+    color-scheme: light;
+    --cp-bg: #f7f4ef;
+    --cp-bg-elevated: #fcfbf8;
+    --cp-surface: #ffffff;
+    --cp-surface-soft: #f5f5f5;
+    --cp-border: #dedede;
+    --cp-border-strong: #919191;
+    --cp-text: #242424;
+    --cp-text-muted: #5c5c5c;
+    --cp-text-soft: #6f6f6f;
+    --cp-accent: #b11f4b;
+    --cp-accent-hover: #9a1a41;
+    --cp-accent-soft: rgba(177, 31, 75, 0.08);
+    --cp-accent-fg: #ffffff;
+    --cp-success: #16a34a;
+    --cp-danger: #dc2626;
+    --cp-warning: #f59e0b;
+    --cp-link: #0078d4;
+    --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+    --cp-overlay: rgba(255, 255, 255, 0.8);
+    --cp-panel: rgba(255, 255, 255, 0.86);
+    --cp-panel-strong: rgba(255, 255, 255, 0.96);
+    --cp-sheen: rgba(255, 255, 255, 0.55);
+    --cp-highlight: rgba(177, 31, 75, 0.12);
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+    --cp-bg: #3d3b3a;
+    --cp-bg-elevated: #343231;
+    --cp-surface: #292929;
+    --cp-surface-soft: #2e2e2e;
+    --cp-border: #474747;
+    --cp-border-strong: #5f5f5f;
+    --cp-text: #dedede;
+    --cp-text-muted: #919191;
+    --cp-text-soft: #b0b0b0;
+    --cp-accent: #fd8ea1;
+    --cp-accent-hover: #fb7b91;
+    --cp-accent-soft: rgba(253, 142, 161, 0.14);
+    --cp-accent-fg: #1a1a1a;
+    --cp-success: #4ade80;
+    --cp-danger: #f87171;
+    --cp-warning: #fbbf24;
+    --cp-link: #4da6ff;
+    --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+    --cp-overlay: rgba(41, 41, 41, 0.88);
+    --cp-panel: rgba(41, 41, 41, 0.72);
+    --cp-panel-strong: rgba(41, 41, 41, 0.96);
+    --cp-sheen: rgba(255, 255, 255, 0.04);
+    --cp-highlight: rgba(253, 142, 161, 0.12);
+  }
+  body {
+    font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--cp-bg);
+    color: var(--cp-text);
+    padding: 0;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  h1, h2, h3 { color: var(--cp-text); margin-top: 24px; }
+  h1 { border-bottom: 2px solid var(--cp-border); padding-bottom: 12px; }
+  h2 { color: var(--cp-accent); border-bottom: 1px solid var(--cp-border); padding-bottom: 6px; scroll-margin-top: 24px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13.5px;
+  }
+  th, td {
+    border: 1px solid var(--cp-border);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background-color: var(--cp-surface-soft); color: var(--cp-accent); }
+  tr:nth-child(even) { background-color: var(--cp-sheen); }
+  code, pre {
+    font-family: Consolas, "Courier New", Courier, monospace;
+    background-color: var(--cp-bg-elevated);
+    border-radius: 4px;
+  }
+  code { padding: 2px 6px; color: var(--cp-accent); font-size: 13px; }
+  pre {
+    padding: 14px;
+    border: 1px solid var(--cp-border);
+    overflow-x: auto;
+    color: var(--cp-text);
+    font-size: 13px;
+  }
+  pre[class*="language-"] {
+    background: var(--cp-bg-elevated);
+    color: var(--cp-text);
+    border: 1px solid var(--cp-border);
+    box-shadow: inset 0 1px 0 var(--cp-sheen);
+  }
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+    display: block;
+  }
+  .token.comment, .token.prolog, .token.doctype, .token.cdata { color: var(--cp-text-muted); }
+  .token.keyword, .token.selector, .token.atrule { color: var(--cp-link); }
+  .token.string, .token.attr-value, .token.char, .token.builtin { color: var(--cp-warning); }
+  .token.number, .token.function, .token.class-name { color: var(--cp-success); }
+  .token.operator, .token.punctuation { color: var(--cp-text); }
+  .token.boolean, .token.constant, .token.property, .token.namespace { color: var(--cp-accent); }
+  .token.tag, .token.attr-name { color: var(--cp-link); }
+  .token.regex, .token.important { color: var(--cp-warning); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .markdown-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    min-width: 0;
+    padding: 32px 40px 80px;
+  }
+  .markdown-page ul,
+  .markdown-page ol {
+    padding-left: 20px;
+  }
+  .markdown-page p,
+  .markdown-page li {
+    color: var(--cp-text);
+  }
+  .markdown-page h3 {
+    margin-bottom: 10px;
+  }
+  a {
+    color: var(--cp-link);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--cp-accent-hover);
+    text-decoration: underline;
+  }
+  .practice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .practice-panel {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-top: 3px solid var(--cp-accent);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .practice-panel h3 {
+    margin: 0 0 14px;
+    color: var(--cp-text);
+    font-size: 17px;
+  }
+  .practice-panel ul {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .practice-panel li {
+    position: relative;
+    padding: 10px 12px 10px 30px;
+    background: var(--cp-surface-soft);
+    border: 1px solid var(--cp-border);
+    border-radius: 6px;
+    line-height: 1.45;
+  }
+  .practice-panel li::before {
+    content: "";
+    position: absolute;
+    top: 16px;
+    left: 13px;
+    width: 7px;
+    height: 7px;
+    border: 2px solid var(--cp-accent);
+    border-radius: 50%;
+  }
+  .practice-panel a {
+    font-weight: 700;
+  }
+  .practice-panel em {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 1px 7px;
+    border: 1px solid var(--cp-border-strong);
+    border-radius: 999px;
+    color: var(--cp-text-muted);
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .practice-panel em[data-difficulty="easy"] {
+    color: var(--cp-success);
+    border-color: var(--cp-success);
+  }
+  .practice-panel em[data-difficulty="medium"] {
+    color: var(--cp-warning);
+    border-color: var(--cp-warning);
+  }
+  .practice-panel em[data-difficulty="hard"] {
+    color: var(--cp-danger);
+    border-color: var(--cp-danger);
+  }
+  @media (max-width: 820px) {
+    .practice-grid { grid-template-columns: 1fr; }
+    .practice-panel { padding: 14px; }
+  }
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .video-panel {
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-border);
+    border-left: 3px solid var(--cp-danger);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .video-panel h3 {
+    margin: 0 0 14px;
+    color: var(--cp-text);
+    font-size: 17px;
+  }
+  .video-panel ul {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .video-panel li {
+    position: relative;
+    padding-left: 27px;
+    color: var(--cp-text-muted);
+    line-height: 1.5;
+  }
+  .video-panel li::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 2px;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 10px solid var(--cp-danger);
+  }
+  .video-panel a {
+    color: var(--cp-accent);
+    font-weight: 700;
+  }
+  .video-panel a:hover {
+    color: var(--cp-accent-hover);
+  }
+  @media (max-width: 820px) {
+    .video-grid { grid-template-columns: 1fr; }
+    .video-panel { padding: 14px; }
+  }
+  .app-shell { display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 100vh; }
+  .sidebar { position: sticky; top: 0; height: 100vh; box-sizing: border-box; overflow-y: auto; padding: 24px 18px; background: var(--cp-bg-elevated); border-right: 1px solid var(--cp-border); }
+  .brand { margin-bottom: 20px; }
+  .brand strong { display: block; color: var(--cp-text); font-size: 18px; }
+  .brand span { color: var(--cp-text-muted); font-size: 12px; }
+  .search-label { display: block; margin-bottom: 16px; color: var(--cp-text-muted); font-size: 12px; font-weight: 700; }
+  .search-input { box-sizing: border-box; width: 100%; margin-top: 6px; padding: 10px 12px; color: var(--cp-text); background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 0.625rem; outline: none; }
+  .search-input:focus { border-color: var(--cp-accent); box-shadow: 0 0 0 3px var(--cp-accent-soft); }
+  .progress-card { margin-bottom: 18px; padding: 12px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 0.625rem; }
+  .progress-row { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; font-size: 12px; font-weight: 700; }
+  .progress-track { height: 6px; overflow: hidden; background: var(--cp-surface-soft); border-radius: 0.625rem; }
+  .progress-fill { width: 0; height: 100%; background: var(--cp-success); transition: width 220ms ease; }
+  .sidebar-title { margin: 18px 0 8px; color: var(--cp-text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+  .section-nav, .pattern-tabs { display: grid; gap: 4px; }
+  .section-nav a, .pattern-tab { padding: 7px 9px; color: var(--cp-text-muted); background: transparent; border: 0; border-radius: 0.625rem; font: inherit; font-size: 12px; text-align: left; cursor: pointer; }
+  .section-nav a:hover, .section-nav a.active, .pattern-tab:hover, .pattern-tab.active { color: var(--cp-accent); background: var(--cp-accent-soft); text-decoration: none; }
+  .study-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+  .study-header h1 { margin: 0; border: 0; }
+  .study-header p { margin: 6px 0 0; color: var(--cp-text-muted); }
+  .theme-button, .code-toggle, .mobile-nav-button { padding: 8px 10px; color: var(--cp-text); background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 0.625rem; cursor: pointer; }
+  .theme-button:hover, .code-toggle:hover, .mobile-nav-button:hover { border-color: var(--cp-accent); color: var(--cp-accent); }
+  .code-shell { margin: 16px 0; border: 1px solid var(--cp-border); border-radius: 0.625rem; overflow: hidden; }
+  .code-shell pre { margin: 0; border: 0; border-radius: 0; }
+  .code-toolbar { display: flex; justify-content: flex-end; padding: 6px 8px; background: var(--cp-surface-soft); border-bottom: 1px solid var(--cp-border); }
+  .code-shell.collapsed pre { display: none; }
+  .practice-check { width: 16px; height: 16px; margin: 3px 8px 0 0; accent-color: var(--cp-success); vertical-align: top; }
+  .practice-panel li:has(.practice-check) { padding-left: 12px; }
+  .practice-panel li:has(.practice-check)::before { display: none; }
+  .practice-panel li.completed { opacity: 0.7; background: var(--cp-accent-soft); }
+  .practice-panel li.completed a { text-decoration: line-through; }
+  .is-filtered-out, .is-search-hidden { display: none; }
+  .mobile-nav-button { display: none; position: fixed; right: 16px; bottom: 16px; z-index: 20; }
+  @media (max-width: 900px) {
+    .app-shell { display: block; }
+    .sidebar { position: fixed; z-index: 10; left: 0; width: min(320px, 88vw); transform: translateX(-100%); transition: transform 180ms ease; box-shadow: var(--cp-shadow); }
+    .sidebar.open { transform: translateX(0); }
+    .mobile-nav-button { display: block; }
+    .markdown-page { padding: 24px 18px 80px; }
+    .study-header { align-items: flex-start; flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Study navigation">
+      <div class="brand">
+        <strong>DSA Study Desk</strong>
+        <span>C# pattern recognition</span>
+      </div>
+      <label class="search-label" for="study-search">
+        Search the sheet
+        <input class="search-input" id="study-search" type="search" placeholder="Try BFS, heap, LC 560...">
+      </label>
+      <div class="progress-card">
+        <div class="progress-row">
+          <span>Practice progress</span>
+          <span id="progress-label">0 / 0</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-label="Practice progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+      <div class="sidebar-title">Sections</div>
+      <nav class="section-nav" id="section-nav"></nav>
+      <div class="sidebar-title">Study a pattern</div>
+      <div class="pattern-tabs" id="pattern-tabs"></div>
+    </aside>
+    <main class="markdown-page" id="study-content">
+      <header class="study-header">
+        <div>
+          <h1>C# DSA Pattern Recognition &amp; Interview Cheat Sheet</h1>
+          <p>Recognize the pattern, review the template, then practice it.</p>
+        </div>
+        <button class="theme-button" id="theme-button" type="button">Switch theme</button>
+      </header>
+
+    <h2>1. Pattern Recognition Matrix</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Problem Signal / Keywords</th>
+          <th>Pattern</th>
+          <th>Primary C# Tooling</th>
+          <th>Complexity</th>
+          <th>Watch Out / Key Trap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>"Contiguous subarray/substring"</strong>, positive sums, at most k distinct</td><td><strong>Sliding Window</strong></td><td><code>int left = 0</code>, <code>Dictionary&lt;char, int&gt;</code>, <code>int[26]</code></td><td>Time: O(N)<br>Space: O(1) or O(K)</td><td>Negative numbers break window monotonicity; switch to Prefix Sum + Map.</td></tr>
+        <tr><td><strong>"Sorted array"</strong>, find pair/triplet, in-place swap, trap water</td><td><strong>Two Pointers</strong></td><td><code>int l = 0, r = n - 1</code></td><td>Time: O(N)<br>Space: O(1)</td><td>Skip duplicates after match: <code>while (l &lt; r &amp;&amp; nums[l] == nums[l+1]) l++</code>.</td></tr>
+        <tr><td><strong>"Cycle detection"</strong>, middle of list, duplicate in array</td><td><strong>Fast &amp; Slow Pointers</strong></td><td><code>slow = slow.next</code>, <code>fast = fast.next.next</code></td><td>Time: O(N)<br>Space: O(1)</td><td>Check <code>fast != null &amp;&amp; fast.next != null</code> in loop condition to avoid null refs.</td></tr>
+        <tr><td><strong>"Top K elements"</strong>, stream median, merge K sorted streams</td><td><strong>Heap / Priority Queue</strong></td><td><code>PriorityQueue&lt;TElement, TPriority&gt;</code></td><td>Time: O(N log K)<br>Space: O(K)</td><td><code>PriorityQueue</code> is Min-Heap by default. Negate priority (<code>-val</code>) or pass custom comparer for Max-Heap.</td></tr>
+        <tr><td><strong>"Next greater/smaller element"</strong>, daily temperatures, histogram</td><td><strong>Monotonic Stack</strong></td><td><code>Stack&lt;int&gt;</code> (storing indices)</td><td>Time: O(N)<br>Space: O(N)</td><td>Decide on strict (<code>&gt;</code>) vs non-strict (<code>&gt;=</code>) pop condition depending on duplicate requirements.</td></tr>
+        <tr><td><strong>"Overlapping intervals"</strong>, meeting rooms, merge ranges</td><td><strong>Interval Sorting</strong></td><td><code>Array.Sort(intervals, (a, b) =&gt; a[0].CompareTo(b[0]))</code></td><td>Time: O(N log N)<br>Space: O(1) or O(N)</td><td>Avoid <code>a[0] - b[0]</code>; use comparer to prevent 32-bit signed integer underflow/overflow.</td></tr>
+        <tr><td><strong>"Shortest path (unweighted)"</strong>, min steps to reach state, level-order</td><td><strong>Breadth-First Search (BFS)</strong></td><td><code>Queue&lt;T&gt;</code> or <code>Queue&lt;(int r, int c)&gt;</code></td><td>Time: O(V + E)<br>Space: O(V)</td><td>Snapshot <code>int levelSize = q.Count</code> per step; mark nodes visited immediately upon enqueue.</td></tr>
+        <tr><td><strong>"Connected components"</strong>, number of islands, valid path exists</td><td><strong>Depth-First Search (DFS)</strong></td><td>Recursion or <code>Stack&lt;T&gt;</code> + <code>bool[,] visited</code></td><td>Time: O(V + E)<br>Space: O(V)</td><td>Deep recursion (N &gt; 10^4) causes stack overflow; use iterative stack if grid is massive.</td></tr>
+        <tr><td><strong>"Prerequisites"</strong>, build order dependencies, directed cycle</td><td><strong>Topological Sort (Kahn's)</strong></td><td><code>int[] inDegree</code>, <code>Dictionary&lt;int, List&lt;int&gt;&gt;</code>, <code>Queue&lt;int&gt;</code></td><td>Time: O(V + E)<br>Space: O(V + E)</td><td>If processed node count != V, a dependency cycle exists.</td></tr>
+        <tr><td><strong>"All combinations, subsets, permutations"</strong>, valid board placements</td><td><strong>Backtracking</strong></td><td>State recursion + <code>List&lt;T&gt;</code></td><td>Time: O(2^N) or O(N!)<br>Space: O(N)</td><td>Always instantiate shallow copies when saving: <code>result.Add(new List&lt;int&gt;(current))</code>.</td></tr>
+        <tr><td><strong>"Min/max cost to reach end"</strong>, count distinct ways, 0/1 knapsack</td><td><strong>Dynamic Programming (DP)</strong></td><td><code>int[] dp</code> (1D) or <code>int[,] dp</code> (2D)</td><td>Time: O(N) to O(N^2)<br>Space: O(N)</td><td>Verify base cases (<code>dp[0]</code>), fill direction (bottom-up), and space-compression opportunities.</td></tr>
+        <tr><td><strong>"Search sorted array"</strong>, find inflection point, rotated array</td><td><strong>Binary Search (Index)</strong></td><td><code>int mid = l + (r - l) / 2</code></td><td>Time: O(log N)<br>Space: O(1)</td><td>Use <code>l + (r - l) / 2</code> to prevent overflow; maintain invariant <code>while (l &lt;= r)</code>.</td></tr>
+        <tr><td><strong>"Minimize the maximum"</strong>, minimum speed/capacity to finish in K hours</td><td><strong>Binary Search (Answer Space)</strong></td><td>Range <code>[low, high]</code> + <code>bool Feasible(mid)</code></td><td>Time: O(N log(range))<br>Space: O(1)</td><td>Define monotonic feasibility condition; expand <code>high</code> to max possible answer value.</td></tr>
+        <tr><td><strong>"Subarray sum equals K"</strong>, arrays with negative values</td><td><strong>Prefix Sum + Hash Map</strong></td><td><code>Dictionary&lt;int, int&gt;</code> (sum -&gt; frequency)</td><td>Time: O(N)<br>Space: O(N)</td><td>Initialize <code>dict[0] = 1</code> before loop to catch valid subarrays starting at index 0.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>2. Constraint (N) Triage</h2>
+    <pre class="language-csharp"><code class="language-csharp">N &lt;= 20         --&gt; O(2^N) or O(N!)      --&gt; Backtracking / Recursion / Bitmask DP
+N &lt;= 1,000      --&gt; O(N^2)               --&gt; 2D DP / Nested Loops / Floyd-Warshall
+N &lt;= 100,000    --&gt; O(N log N) or O(N)   --&gt; Sorting / Two Pointers / Sliding Window / Heap / Monotonic Stack
+N &gt;= 1,000,000  --&gt; O(log N) or O(1)     --&gt; Binary Search on Answer / Math / Bit Manipulation</code></pre>
+
+    <h2>3. Rapid Decision Tree</h2>
+    <pre class="language-csharp"><code class="language-csharp">1. Is the input sorted or nearly sorted?
+   ├── YES ──&gt; Try Two Pointers or Binary Search.
+   └── NO  ──&gt; Can sorting first yield an O(N log N) solution?
+
+2. Does the problem ask for "contiguous subarrays / substrings"?
+   ├── All positive / monotonic state ──&gt; Sliding Window.
+   └── Contains negative numbers      ──&gt; Prefix Sum + Dictionary&lt;int, int&gt;.
+
+3. Does the problem ask for "Next / Previous Greater or Smaller"?
+   └── YES ──&gt; Monotonic Stack (store indices in Stack&lt;int&gt;).
+
+4. Does the problem ask for "Shortest / Minimum steps" between states?
+   ├── Unweighted transitions ──&gt; BFS with Queue&lt;T&gt;.
+   ├── Weighted transitions   ──&gt; Dijkstra with PriorityQueue&lt;TElement, TPriority&gt;.
+   └── Max/Min optimal value  ──&gt; Dynamic Programming.
+
+5. Does the problem ask to "Minimize the Maximum" or "Find threshold"?
+   └── YES ──&gt; Binary Search on Answer Space (feasible(mid) function).</code></pre>
+
+    <h2>4. C# Collections &amp; Syntax Reference</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Operation / Need</th>
+          <th>C# Syntax</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Min-Heap</strong></td><td><code class="language-csharp">var minPq = new PriorityQueue&lt;int, int&gt;();</code></td><td><code class="language-csharp">minPq.Enqueue(item, priority)</code> / <code class="language-csharp">minPq.Dequeue()</code></td></tr>
+        <tr><td><strong>Max-Heap</strong></td><td><code class="language-csharp">var maxPq = new PriorityQueue&lt;int, int&gt;(Comparer&lt;int&gt;.Create((a, b) =&gt; b.CompareTo(a)));</code></td><td>Or negate priority: <code class="language-csharp">maxPq.Enqueue(val, -val);</code></td></tr>
+        <tr><td><strong>Queue Safe Read</strong></td><td><code class="language-csharp">if (q.TryDequeue(out var item)) { ... }</code></td><td>Prevents <code class="language-csharp">InvalidOperationException</code> on empty queue</td></tr>
+        <tr><td><strong>Stack Safe Read</strong></td><td><code class="language-csharp">if (st.TryPeek(out var top)) { ... }</code></td><td>Prevents <code class="language-csharp">InvalidOperationException</code> on empty stack</td></tr>
+        <tr><td><strong>Map Fallback</strong></td><td><code class="language-csharp">dict[key] = dict.GetValueOrDefault(key, 0) + 1;</code></td><td>Cleaner than <code class="language-csharp">dict.ContainsKey(key)</code></td></tr>
+        <tr><td><strong>ASCII Frequency</strong></td><td><code class="language-csharp">int[] count = new int[26]; count[c - 'a']++;</code></td><td>Faster than <code class="language-csharp">Dictionary&lt;char, int&gt;</code></td></tr>
+        <tr><td><strong>Grid Vectors</strong></td><td><code class="language-csharp">ReadOnlySpan&lt;(int dr, int dc)&gt; dirs = stackalloc[] { (-1,0), (1,0), (0,-1), (0,1) };</code></td><td>Zero allocation on garbage collector</td></tr>
+        <tr><td><strong>Interval Sort</strong></td><td><code class="language-csharp">Array.Sort(intervals, (a, b) =&gt; a[0].CompareTo(b[0]));</code></td><td>Prevents integer underflow</td></tr>
+        <tr><td><strong>Copy for Backtrack</strong></td><td><code class="language-csharp">result.Add(new List&lt;int&gt;(current));</code></td><td>Copies snapshot by value</td></tr>
+        <tr><td><strong>String Loops</strong></td><td><code class="language-csharp">var sb = new StringBuilder(); sb.Append(c);</code></td><td>Prevents O(N^2) allocations</td></tr>
+      </tbody>
+    </table>
+
+    <h2>5. Core C# Boilerplate Templates</h2>
+
+    <h3>1. Sliding Window (Dynamic Contraction)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public int MinSubArrayLen(int target, int[] nums) {
+    int left = 0, currentSum = 0;
+    int minLen = int.MaxValue;
+
+    for (int right = 0; right &lt; nums.Length; right++) {
+        currentSum += nums[right];
+
+        while (currentSum &gt;= target) {
+            minLen = Math.Min(minLen, right - left + 1);
+            currentSum -= nums[left];
+            left++;
+        }
+    }
+    return minLen == int.MaxValue ? 0 : minLen;
+}</code></pre>
+
+    <h3>2. Two Pointers (3Sum Pattern)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public IList&lt;IList&lt;int&gt;&gt; ThreeSum(int[] nums) {
+    Array.Sort(nums);
+    var result = new List&lt;IList&lt;int&gt;&gt;();
+
+    for (int i = 0; i &lt; nums.Length - 2; i++) {
+        if (i &gt; 0 &amp;&amp; nums[i] == nums[i - 1]) continue;
+
+        int left = i + 1, right = nums.Length - 1;
+        while (left &lt; right) {
+            int sum = nums[i] + nums[left] + nums[right];
+            if (sum == 0) {
+                result.Add(new List&lt;int&gt; { nums[i], nums[left], nums[right] });
+                while (left &lt; right &amp;&amp; nums[left] == nums[left + 1]) left++;
+                while (left &lt; right &amp;&amp; nums[right] == nums[right - 1]) right--;
+                left++;
+                right--;
+            } else if (sum &lt; 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    return result;
+}</code></pre>
+
+    <h3>3. Fast &amp; Slow Pointers (Cycle Detection)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public ListNode DetectCycle(ListNode head) {
+    ListNode slow = head, fast = head;
+
+    while (fast != null &amp;&amp; fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) {
+            ListNode entry = head;
+            while (entry != slow) {
+                entry = entry.next;
+                slow = slow.next;
+            }
+            return entry;
+        }
+    }
+    return null;
+}</code></pre>
+
+    <h3>4. Binary Search on Answer Space</h3>
+    <pre class="language-csharp"><code class="language-csharp">public int MinEatingSpeed(int[] piles, int h) {
+    int left = 1, right = piles.Max();
+    int result = right;
+
+    while (left &lt;= right) {
+        int mid = left + (right - left) / 2;
+        if (CanFinish(piles, mid, h)) {
+            result = mid;
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+    return result;
+}
+
+private bool CanFinish(int[] piles, int speed, int h) {
+    long hours = 0;
+    foreach (int p in piles) {
+        hours += (p + speed - 1) / speed;
+    }
+    return hours &lt;= h;
+}</code></pre>
+
+    <h3>5. Prefix Sum + Hash Map (Exact Target Sum)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public int SubarraySum(int[] nums, int k) {
+    var prefixCounts = new Dictionary&lt;int, int&gt; { [0] = 1 };
+    int currentSum = 0, count = 0;
+
+    foreach (int n in nums) {
+        currentSum += n;
+        if (prefixCounts.TryGetValue(currentSum - k, out int matchCount)) {
+            count += matchCount;
+        }
+        prefixCounts[currentSum] = prefixCounts.GetValueOrDefault(currentSum, 0) + 1;
+    }
+    return count;
+}</code></pre>
+
+    <h3>6. Monotonic Stack (Next Greater Element)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public int[] DailyTemperatures(int[] temperatures) {
+    int n = temperatures.Length;
+    int[] result = new int[n];
+    var stack = new Stack&lt;int&gt;();
+
+    for (int i = 0; i &lt; n; i++) {
+        while (stack.Count &gt; 0 &amp;&amp; temperatures[i] &gt; temperatures[stack.Peek()]) {
+            int prevIndex = stack.Pop();
+            result[prevIndex] = i - prevIndex;
+        }
+        stack.Push(i);
+    }
+    return result;
+}</code></pre>
+
+    <h3>7. PriorityQueue (Top K Frequent Elements)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public int[] TopKFrequent(int[] nums, int k) {
+    var counts = new Dictionary&lt;int, int&gt;();
+    foreach (int n in nums) counts[n] = counts.GetValueOrDefault(n, 0) + 1;
+
+    var minHeap = new PriorityQueue&lt;int, int&gt;();
+
+    foreach (var (num, freq) in counts) {
+        minHeap.Enqueue(num, freq);
+        if (minHeap.Count &gt; k) {
+            minHeap.Dequeue();
+        }
+    }
+
+    int[] result = new int[k];
+    for (int i = 0; i &lt; k; i++) result[i] = minHeap.Dequeue();
+    return result;
+}</code></pre>
+
+    <h3>8. Multi-Source BFS (2D Grid)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public int OrangesRotting(int[][] grid) {
+    int rows = grid.Length, cols = grid[0].Length;
+    var queue = new Queue&lt;(int r, int c)&gt;();
+    int fresh = 0;
+
+    for (int r = 0; r &lt; rows; r++) {
+        for (int c = 0; c &lt; cols; c++) {
+            if (grid[r][c] == 2) queue.Enqueue((r, c));
+            else if (grid[r][c] == 1) fresh++;
+        }
+    }
+
+    if (fresh == 0) return 0;
+    int steps = 0;
+    ReadOnlySpan&lt;(int dr, int dc)&gt; dirs = stackalloc[] { (-1, 0), (1, 0), (0, -1), (0, 1) };
+
+    while (queue.Count &gt; 0 &amp;&amp; fresh &gt; 0) {
+        int levelSize = queue.Count;
+        steps++;
+        for (int i = 0; i &lt; levelSize; i++) {
+            var (r, c) = queue.Dequeue();
+            foreach (var (dr, dc) in dirs) {
+                int nr = r + dr, nc = c + dc;
+                if (nr &gt;= 0 &amp;&amp; nr &lt; rows &amp;&amp; nc &gt;= 0 &amp;&amp; nc &lt; cols &amp;&amp; grid[nr][nc] == 1) {
+                    grid[nr][nc] = 2;
+                    fresh--;
+                    queue.Enqueue((nr, nc));
+                }
+            }
+        }
+    }
+    return fresh == 0 ? steps : -1;
+}</code></pre>
+
+    <h3>9. Topological Sort (Kahn's Algorithm)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public int[] FindOrder(int numCourses, int[][] prerequisites) {
+    var adj = new List&lt;int&gt;[numCourses];
+    for (int i = 0; i &lt; numCourses; i++) adj[i] = new List&lt;int&gt;();
+    int[] inDegree = new int[numCourses];
+
+    foreach (var edge in prerequisites) {
+        adj[edge[1]].Add(edge[0]);
+        inDegree[edge[0]]++;
+    }
+
+    var queue = new Queue&lt;int&gt;();
+    for (int i = 0; i &lt; numCourses; i++) {
+        if (inDegree[i] == 0) queue.Enqueue(i);
+    }
+
+    int[] order = new int[numCourses];
+    int index = 0;
+
+    while (queue.Count &gt; 0) {
+        int curr = queue.Dequeue();
+        order[index++] = curr;
+
+        foreach (int neighbor in adj[curr]) {
+            inDegree[neighbor]--;
+            if (inDegree[neighbor] == 0) queue.Enqueue(neighbor);
+        }
+    }
+    return index == numCourses ? order : Array.Empty&lt;int&gt;();
+}</code></pre>
+
+    <h3>10. Backtracking (Subsets)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public IList&lt;IList&lt;int&gt;&gt; Subsets(int[] nums) {
+    var result = new List&lt;IList&lt;int&gt;&gt;();
+    Backtrack(0, nums, new List&lt;int&gt;(), result);
+    return result;
+}
+
+private void Backtrack(int start, int[] nums, List&lt;int&gt; current, IList&lt;IList&lt;int&gt;&gt; result) {
+    result.Add(new List&lt;int&gt;(current));
+
+    for (int i = start; i &lt; nums.Length; i++) {
+        current.Add(nums[i]);
+        Backtrack(i + 1, nums, current, result);
+        current.RemoveAt(current.Count - 1);
+    }
+}</code></pre>
+
+    <h3>11. 1D Dynamic Programming (Coin Change)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public int CoinChange(int[] coins, int amount) {
+    int[] dp = new int[amount + 1];
+    Array.Fill(dp, amount + 1);
+    dp[0] = 0;
+
+    for (int i = 1; i &lt;= amount; i++) {
+        foreach (int coin in coins) {
+            if (i - coin &gt;= 0) {
+                dp[i] = Math.Min(dp[i], dp[i - coin] + 1);
+            }
+        }
+    }
+    return dp[amount] &gt; amount ? -1 : dp[amount];
+}</code></pre>
+
+    <h3>12. 2D Dynamic Programming (Longest Common Subsequence)</h3>
+    <pre class="language-csharp"><code class="language-csharp">public int LongestCommonSubsequence(string text1, string text2) {
+    int m = text1.Length, n = text2.Length;
+    int[,] dp = new int[m + 1, n + 1];
+
+    for (int i = 1; i &lt;= m; i++) {
+        for (int j = 1; j &lt;= n; j++) {
+            if (text1[i - 1] == text2[j - 1]) {
+                dp[i, j] = 1 + dp[i - 1, j - 1];
+            } else {
+                dp[i, j] = Math.Max(dp[i - 1, j], dp[i, j - 1]);
+            }
+        }
+    }
+    return dp[m, n];
+}</code></pre>
+
+    <h2>6. Critical C# Edge Cases &amp; Traps</h2>
+    <ul>
+      <li><strong>Midpoint Calculation:</strong> Always use <code>int mid = left + (right - left) / 2;</code> to avoid signed integer overflow.</li>
+      <li><strong>Sort Subtraction:</strong> Avoid <code>(a, b) =&gt; a[0] - b[0];</code> use <code>(a, b) =&gt; a[0].CompareTo(b[0])</code> to prevent underflow wrap-around with negative numbers.</li>
+      <li><strong>Queue / Stack Exceptions:</strong> <code>.Pop()</code> and <code>.Dequeue()</code> throw <code>InvalidOperationException</code> on empty collections; check <code>.Count &gt; 0</code> or use <code>.TryPop()</code> / <code>.TryDequeue()</code>.</li>
+      <li><strong>Backtracking References:</strong> Adding <code>result.Add(current)</code> stores the reference, leaving all snapshots empty at the end. Use <code>result.Add(new List&lt;int&gt;(current))</code>.</li>
+      <li><strong>HashSet with Arrays:</strong> <code>new HashSet&lt;int[]&gt;()</code> checks reference equality, not array contents. Key with <code>string.Join(",", arr)</code> or a custom <code>IEqualityComparer&lt;int[]&gt;</code>.</li>
+      <li><strong>Modulo with Negatives:</strong> In C#, <code>-7 % 3</code> evaluates to <code>-1</code>. Use <code>((val % k) + k) % k</code> to get positive wrap-around modulo.</li>
+    </ul>
+
+    <h2 id="practice-problems">7. LeetCode Practice Problems by Pattern</h2>
+
+    <h3>1. Sliding Window</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/minimum-size-subarray-sum/" target="_blank" rel="noopener noreferrer">LC 209: Minimum Size Subarray Sum</a> <em>(Medium)</em> — Dynamic window expansion and contraction to find minimum length.</li>
+      <li><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener noreferrer">LC 3: Longest Substring Without Repeating Characters</a> <em>(Medium)</em> — Window tracking with a Set/Map to enforce character uniqueness.</li>
+      <li><a href="https://leetcode.com/problems/longest-repeating-character-replacement/" target="_blank" rel="noopener noreferrer">LC 424: Longest Repeating Character Replacement</a> <em>(Medium)</em> — Window tracking with majority element frequency count.</li>
+      <li><a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank" rel="noopener noreferrer">LC 76: Minimum Window Substring</a> <em>(Hard)</em> — Two-frequency map matching with exact character constraints.</li>
+    </ul>
+
+    <h3>2. Two Pointers</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" target="_blank" rel="noopener noreferrer">LC 167: Two Sum II - Input Array Is Sorted</a> <em>(Medium)</em> — Inward convergence on a sorted array.</li>
+      <li><a href="https://leetcode.com/problems/3sum/" target="_blank" rel="noopener noreferrer">LC 15: 3Sum</a> <em>(Medium)</em> — Fixed anchor loop combined with two-pointer deduplication.</li>
+      <li><a href="https://leetcode.com/problems/container-with-most-water/" target="_blank" rel="noopener noreferrer">LC 11: Container With Most Water</a> <em>(Medium)</em> — Greedy inward stepping based on the limiting boundary.</li>
+      <li><a href="https://leetcode.com/problems/trapping-rain-water/" target="_blank" rel="noopener noreferrer">LC 42: Trapping Rain Water</a> <em>(Hard)</em> — Maintaining left and right maximum elevation boundaries.</li>
+    </ul>
+
+    <h3>3. Fast &amp; Slow Pointers</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="noopener noreferrer">LC 141: Linked List Cycle</a> <em>(Easy)</em> — Standard Floyd's Tortoise and Hare cycle detection.</li>
+      <li><a href="https://leetcode.com/problems/middle-of-the-linked-list/" target="_blank" rel="noopener noreferrer">LC 876: Middle of the Linked List</a> <em>(Easy)</em> — Finding the midpoint using a 1x vs 2x stride difference.</li>
+      <li><a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank" rel="noopener noreferrer">LC 142: Linked List Cycle II</a> <em>(Medium)</em> — Algebraic resolution of the cycle entry node.</li>
+      <li><a href="https://leetcode.com/problems/find-the-duplicate-number/" target="_blank" rel="noopener noreferrer">LC 287: Find the Duplicate Number</a> <em>(Medium)</em> — Treating an array as an implicit linked-list pointer cycle.</li>
+    </ul>
+
+    <h3>4. Heap / PriorityQueue</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank" rel="noopener noreferrer">LC 215: Kth Largest Element in an Array</a> <em>(Medium)</em> — Bounded Min-Heap of size K.</li>
+      <li><a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank" rel="noopener noreferrer">LC 347: Top K Frequent Elements</a> <em>(Medium)</em> — Frequency dictionary paired with a Min-Heap.</li>
+      <li><a href="https://leetcode.com/problems/k-closest-points-to-origin/" target="_blank" rel="noopener noreferrer">LC 973: K Closest Points to Origin</a> <em>(Medium)</em> — Bounded Max-Heap of size K to discard further coordinates.</li>
+      <li><a href="https://leetcode.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener noreferrer">LC 295: Find Median from Data Stream</a> <em>(Hard)</em> — Dual-heap balance using a Max-Heap (lower half) and Min-Heap (upper half).</li>
+    </ul>
+
+    <h3>5. Monotonic Stack</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/next-greater-element-i/" target="_blank" rel="noopener noreferrer">LC 496: Next Greater Element I</a> <em>(Easy)</em> — Basic decreasing stack template.</li>
+      <li><a href="https://leetcode.com/problems/daily-temperatures/" target="_blank" rel="noopener noreferrer">LC 739: Daily Temperatures</a> <em>(Medium)</em> — Storing indices to calculate distances to the next greater value.</li>
+      <li><a href="https://leetcode.com/problems/next-greater-element-ii/" target="_blank" rel="noopener noreferrer">LC 503: Next Greater Element II</a> <em>(Medium)</em> — Circular array handling using index modulo (2N).</li>
+      <li><a href="https://leetcode.com/problems/largest-rectangle-in-histogram/" target="_blank" rel="noopener noreferrer">LC 84: Largest Rectangle in Histogram</a> <em>(Hard)</em> — Area computation using stack-maintained boundary limits.</li>
+    </ul>
+
+    <h3>6. Interval Sorting</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/merge-intervals/" target="_blank" rel="noopener noreferrer">LC 56: Merge Intervals</a> <em>(Medium)</em> — Sorting by start time followed by a linear merge scan.</li>
+      <li><a href="https://leetcode.com/problems/insert-interval/" target="_blank" rel="noopener noreferrer">LC 57: Insert Interval</a> <em>(Medium)</em> — 3-phase partition: before overlap, merged overlap, and after overlap.</li>
+      <li><a href="https://leetcode.com/problems/non-overlapping-intervals/" target="_blank" rel="noopener noreferrer">LC 435: Non-overlapping Intervals</a> <em>(Medium)</em> — Greedy interval elimination sorted by end time.</li>
+      <li><a href="https://leetcode.com/problems/meeting-rooms-ii/" target="_blank" rel="noopener noreferrer">LC 253: Meeting Rooms II</a> <em>(Medium)</em> — Tracking concurrent active intervals with a Min-Heap or line sweep.</li>
+    </ul>
+
+    <h3>7. Breadth-First Search (BFS)</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener noreferrer">LC 102: Binary Tree Level Order Traversal</a> <em>(Medium)</em> — Queue size snapshotting per level.</li>
+      <li><a href="https://leetcode.com/problems/rotting-oranges/" target="_blank" rel="noopener noreferrer">LC 994: Rotting Oranges</a> <em>(Medium)</em> — Multi-source simultaneous grid BFS step counting.</li>
+      <li><a href="https://leetcode.com/problems/01-matrix/" target="_blank" rel="noopener noreferrer">LC 542: 01 Matrix</a> <em>(Medium)</em> — Multi-source distance propagation across a 2D matrix.</li>
+      <li><a href="https://leetcode.com/problems/word-ladder/" target="_blank" rel="noopener noreferrer">LC 127: Word Ladder</a> <em>(Hard)</em> — Shortest transformation path in an unweighted state graph.</li>
+    </ul>
+
+    <h3>8. Depth-First Search (DFS)</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/number-of-islands/" target="_blank" rel="noopener noreferrer">LC 200: Number of Islands</a> <em>(Medium)</em> — Connected component exploration via grid flood fill.</li>
+      <li><a href="https://leetcode.com/problems/clone-graph/" target="_blank" rel="noopener noreferrer">LC 133: Clone Graph</a> <em>(Medium)</em> — Graph traversal with cycle prevention using a visited hash map.</li>
+      <li><a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/" target="_blank" rel="noopener noreferrer">LC 124: Binary Tree Maximum Path Sum</a> <em>(Hard)</em> — Post-order traversal maximizing subtree branch contributions.</li>
+    </ul>
+
+    <h3>9. Topological Sort (Kahn's Algorithm)</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/course-schedule/" target="_blank" rel="noopener noreferrer">LC 207: Course Schedule</a> <em>(Medium)</em> — Directed cycle detection using in-degree array and a queue.</li>
+      <li><a href="https://leetcode.com/problems/course-schedule-ii/" target="_blank" rel="noopener noreferrer">LC 210: Course Schedule II</a> <em>(Medium)</em> — Linear dependency ordering generation.</li>
+      <li><a href="https://leetcode.com/problems/minimum-height-trees/" target="_blank" rel="noopener noreferrer">LC 310: Minimum Height Trees</a> <em>(Medium)</em> — Inward leaf-trimming BFS to identify topological centroids.</li>
+    </ul>
+
+    <h3>10. Backtracking</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/subsets/" target="_blank" rel="noopener noreferrer">LC 78: Subsets</a> <em>(Medium)</em> — Inclusion vs exclusion state branching.</li>
+      <li><a href="https://leetcode.com/problems/permutations/" target="_blank" rel="noopener noreferrer">LC 46: Permutations</a> <em>(Medium)</em> — Exhaustive ordering generation with visited state tracking.</li>
+      <li><a href="https://leetcode.com/problems/combination-sum/" target="_blank" rel="noopener noreferrer">LC 39: Combination Sum</a> <em>(Medium)</em> — Target reduction tree allowing element reuse.</li>
+      <li><a href="https://leetcode.com/problems/word-search/" target="_blank" rel="noopener noreferrer">LC 79: Word Search</a> <em>(Medium)</em> — Grid DFS with state mutation and backtracking restoration.</li>
+    </ul>
+
+    <h3>11. 1D Dynamic Programming</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/climbing-stairs/" target="_blank" rel="noopener noreferrer">LC 70: Climbing Stairs</a> <em>(Easy)</em> — Linear recurrence relation ($dp[i] = dp[i-1] + dp[i-2]$).</li>
+      <li><a href="https://leetcode.com/problems/coin-change/" target="_blank" rel="noopener noreferrer">LC 322: Coin Change</a> <em>(Medium)</em> — Unbounded knapsack minimizing transition cost.</li>
+      <li><a href="https://leetcode.com/problems/longest-increasing-subsequence/" target="_blank" rel="noopener noreferrer">LC 300: Longest Increasing Subsequence</a> <em>(Medium)</em> — State comparison ($O(N^2)$ DP) vs Patience Sorting ($O(N \log N)$).</li>
+    </ul>
+
+    <h3>12. 2D Dynamic Programming &amp; Knapsack</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/longest-common-subsequence/" target="_blank" rel="noopener noreferrer">LC 1143: Longest Common Subsequence</a> <em>(Medium)</em> — 2D matrix character match/skip transitions.</li>
+      <li><a href="https://leetcode.com/problems/partition-equal-subset-sum/" target="_blank" rel="noopener noreferrer">LC 416: Partition Equal Subset Sum</a> <em>(Medium)</em> — 0/1 knapsack sum targeting with 1D array state compression.</li>
+      <li><a href="https://leetcode.com/problems/edit-distance/" target="_blank" rel="noopener noreferrer">LC 72: Edit Distance</a> <em>(Hard)</em> — 3-way decision matrix (insert, delete, replace).</li>
+    </ul>
+
+    <h3>13. Binary Search (Index / Range)</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/binary-search/" target="_blank" rel="noopener noreferrer">LC 704: Binary Search</a> <em>(Easy)</em> — Boundary management on a monotonic array.</li>
+      <li><a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" rel="noopener noreferrer">LC 153: Find Minimum in Rotated Sorted Array</a> <em>(Medium)</em> — Finding inflection points by comparing against boundary elements.</li>
+      <li><a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank" rel="noopener noreferrer">LC 33: Search in Rotated Sorted Array</a> <em>(Medium)</em> — Monotonically sorted half isolation.</li>
+    </ul>
+
+    <h3>14. Binary Search (Answer Space)</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/koko-eating-bananas/" target="_blank" rel="noopener noreferrer">LC 875: Koko Eating Bananas</a> <em>(Medium)</em> — Feasibility search over rate range $[1, \max(piles)]$.</li>
+      <li><a href="https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/" target="_blank" rel="noopener noreferrer">LC 1011: Capacity To Ship Packages Within D Days</a> <em>(Medium)</em> — Capacity search over range $[\max(weights), \sum weights]$.</li>
+      <li><a href="https://leetcode.com/problems/split-array-largest-sum/" target="_blank" rel="noopener noreferrer">LC 410: Split Array Largest Sum</a> <em>(Medium)</em> — Min-max subarray allocation feasibility predicate.</li>
+    </ul>
+
+    <h3>15. Prefix Sum + Hash Map</h3>
+    <ul>
+      <li><a href="https://leetcode.com/problems/subarray-sum-equals-k/" target="_blank" rel="noopener noreferrer">LC 560: Subarray Sum Equals K</a> <em>(Medium)</em> — Subarray count on data containing negative numbers.</li>
+      <li><a href="https://leetcode.com/problems/contiguous-array/" target="_blank" rel="noopener noreferrer">LC 525: Contiguous Array</a> <em>(Medium)</em> — Transforming 0s to -1s to find maximum equal subarray length.</li>
+      <li><a href="https://leetcode.com/problems/subarray-sums-divisible-by-k/" target="_blank" rel="noopener noreferrer">LC 974: Subarray Sums Divisible by K</a> <em>(Medium)</em> — Tracking remainder frequencies with mathematical modulo.</li>
+    </ul>
+
+    <h2 id="video-walkthroughs">8. Video Walkthroughs by Pattern</h2>
+
+    <h3>1. Sliding Window</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=tLsoelNl3To" target="_blank" rel="noopener noreferrer">Sliding Window Algorithm for Tech Interviews — Alvin Zablan / freeCodeCamp</a> — Dynamic window sizing, substring anagrams, and hash map tracking.</li>
+      <li><a href="https://www.youtube.com/watch?v=Mf9C6vDxhzk" target="_blank" rel="noopener noreferrer">Solving All Sliding Window Blind75 Problems — NeetCode</a> — Practical walkthrough across the core LeetCode sliding window problems.</li>
+    </ul>
+
+    <h3>2. Two Pointers</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=6lX7x1RcLvg" target="_blank" rel="noopener noreferrer">Solving All Two Pointer Blind75 Problems — NeetCode</a> — Inward convergence, duplicate skipping, and 3Sum pointer coordination.</li>
+      <li><a href="https://www.youtube.com/watch?v=dzyfVfyRnBc" target="_blank" rel="noopener noreferrer">Two Sum Pattern &amp; Hash Table Logic — Back To Back SWE</a> — Foundational array pair matching logic and complexity trade-offs.</li>
+    </ul>
+
+    <h3>3. Fast &amp; Slow Pointers (Floyd's Tortoise &amp; Hare)</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=gBTe7lFR3vc" target="_blank" rel="noopener noreferrer">Linked List Cycle Detection Explained — NeetCode</a> — Mathematical intuition of the 2x stride collision and cycle-entry resolution.</li>
+    </ul>
+
+    <h3>4. Heap / Priority Queue</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=RBSGKlAvoiM" target="_blank" rel="noopener noreferrer">Data Structures: Priority Queues and Binary Heaps — William Fiset</a> — Visual breakdown of Min-Heap/Max-Heap mechanics, bubbling operations, and bounds.</li>
+    </ul>
+
+    <h3>5. Monotonic Stack</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=Dq_ObZwTY_Q" target="_blank" rel="noopener noreferrer">Daily Temperatures (LeetCode 739) Monotonic Stack — NeetCode</a> — Step-by-step index storage on decreasing stacks for next greater element problems.</li>
+    </ul>
+
+    <h3>6. Interval Sorting &amp; Merging</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=NDpwj0VWz1U" target="_blank" rel="noopener noreferrer">Merge Intervals (LeetCode 56) — Nick White</a> — Visualizing interval overlaps, start-time sorting, and linear interval expansion.</li>
+    </ul>
+
+    <h3>7. Breadth-First Search (BFS) &amp; Depth-First Search (DFS)</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=tWVWeAqZ0WU" target="_blank" rel="noopener noreferrer">Graph Algorithms for Technical Interviews — Alvin Zablan / freeCodeCamp</a> — 2D matrix traversals, queue-based layer tracking, and flood fill recursion.</li>
+      <li><a href="https://www.youtube.com/watch?v=09_LlHjoEiY" target="_blank" rel="noopener noreferrer">Graph Theory Course (BFS/DFS Implementations) — William Fiset</a> — In-depth visual graph theory covering grid navigation and shortest paths.</li>
+    </ul>
+
+    <h3>8. Topological Sort (Kahn's Algorithm &amp; DAGs)</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=09_LlHjoEiY" target="_blank" rel="noopener noreferrer">Topological Sort &amp; Dependency Resolution — William Fiset</a> — In-degree counting, DAG cycle detection, and processing queues.</li>
+    </ul>
+
+    <h3>9. Backtracking</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=xCbYmUPvc2Q" target="_blank" rel="noopener noreferrer">0/1 Knapsack &amp; Recursive Subproblem Decomposition — Back To Back SWE</a> — State-tree exploration, pruning paths, and choose-explore-unchoose recursion.</li>
+    </ul>
+
+    <h3>10. 1D Dynamic Programming</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=NFJ3m9a1oJQ" target="_blank" rel="noopener noreferrer">Top-Down &amp; Bottom-Up DP (Climbing Stairs) — Back To Back SWE</a> — Moving from naive recursion to memoization and bottom-up 1D tabulation.</li>
+      <li><a href="https://www.youtube.com/watch?v=66hDgWottdA" target="_blank" rel="noopener noreferrer">Dynamic Programming Course with Visual Animations — Alvin Zablan / freeCodeCamp</a> — Systematic breakdown of memoization trees, base states, and coin change.</li>
+    </ul>
+
+    <h3>11. 2D Dynamic Programming &amp; Knapsack</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=4ClOkX0SWW4" target="_blank" rel="noopener noreferrer">Longest Common Subsequence Visually Explained — Back To Back SWE</a> — 2D grid construction, subproblem boundaries, and state transition formulas.</li>
+    </ul>
+
+    <h3>12. Binary Search on Answer Space</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=L4FfE8M2dNg" target="_blank" rel="noopener noreferrer">Koko Eating Bananas (LeetCode 875) — NeetCode</a> — Setting up monotonic feasibility functions and searching over continuous rate ranges.</li>
+    </ul>
+
+    <h3>13. Prefix Sum + Hash Map</h3>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=98hhPatz9NQ" target="_blank" rel="noopener noreferrer">Subarray Sum Equals K (LeetCode 560) — NeetCode</a> — Why prefix sums handle negative values when sliding window fails, and why <code>map[0] = 1</code> is required.</li>
+    </ul>
+    </main>
+  </div>
+  <button class="mobile-nav-button" id="mobile-nav-button" type="button" aria-controls="sidebar" aria-expanded="false">Menu</button>
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+
+      const practiceHeading = document.getElementById('practice-problems');
+      const practiceGrid = document.createElement('div');
+      practiceGrid.className = 'practice-grid';
+      practiceHeading.insertAdjacentElement('afterend', practiceGrid);
+
+      let element = practiceGrid.nextElementSibling;
+      while (element && element.tagName === 'H3') {
+        const heading = element;
+        const list = heading.nextElementSibling;
+        element = list.nextElementSibling;
+
+        const panel = document.createElement('section');
+        panel.className = 'practice-panel';
+        panel.dataset.pattern = heading.textContent.replace(/^\d+\.\s*/, '');
+        panel.append(heading, list);
+        practiceGrid.append(panel);
+
+        list.querySelectorAll('em').forEach(function (badge) {
+          badge.dataset.difficulty = badge.textContent.replace(/[()]/g, '').toLowerCase();
+        });
+      }
+
+      const videoHeading = document.getElementById('video-walkthroughs');
+      const videoGrid = document.createElement('div');
+      videoGrid.className = 'video-grid';
+      videoHeading.insertAdjacentElement('afterend', videoGrid);
+
+      element = videoGrid.nextElementSibling;
+      while (element && element.tagName === 'H3') {
+        const heading = element;
+        const list = heading.nextElementSibling;
+        element = list.nextElementSibling;
+
+        const panel = document.createElement('section');
+        panel.className = 'video-panel';
+        panel.dataset.pattern = heading.textContent.replace(/^\d+\.\s*/, '');
+        panel.append(heading, list);
+        videoGrid.append(panel);
+      }
+
+      const content = document.getElementById('study-content');
+      const sectionNav = document.getElementById('section-nav');
+      const headings = Array.from(content.querySelectorAll(':scope > h2'));
+      headings.forEach(function (heading, index) {
+        if (!heading.id) heading.id = 'section-' + (index + 1);
+        const link = document.createElement('a');
+        link.href = '#' + heading.id;
+        link.textContent = heading.textContent.replace(/^\d+\.\s*/, '');
+        link.addEventListener('click', function () {
+          document.getElementById('sidebar').classList.remove('open');
+          document.getElementById('mobile-nav-button').setAttribute('aria-expanded', 'false');
+        });
+        sectionNav.append(link);
+      });
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          sectionNav.querySelectorAll('a').forEach(function (link) {
+            link.classList.toggle('active', link.hash === '#' + entry.target.id);
+          });
+        });
+      }, { rootMargin: '-10% 0px -75% 0px' });
+      headings.forEach(function (heading) { observer.observe(heading); });
+
+      const practicePanels = Array.from(document.querySelectorAll('.practice-panel'));
+      const videoPanels = Array.from(document.querySelectorAll('.video-panel'));
+      const patternTabs = document.getElementById('pattern-tabs');
+      let selectedPattern = 'all';
+
+      function normalizePattern(value) {
+        return value.toLowerCase()
+          .replace(/breadth-first search|bfs/g, 'bfs')
+          .replace(/depth-first search|dfs/g, 'dfs')
+          .replace(/priorityqueue|priority queue/g, 'heap')
+          .replace(/\([^)]*\)/g, '')
+          .replace(/[^a-z0-9]+/g, '-');
+      }
+
+      function applyFilters() {
+        const query = document.getElementById('study-search').value.trim().toLowerCase();
+        practicePanels.concat(videoPanels).forEach(function (panel) {
+          const normalized = normalizePattern(panel.dataset.pattern);
+          const patternMatch = selectedPattern === 'all' || normalized.includes(selectedPattern) || selectedPattern.includes(normalized);
+          const searchMatch = !query || panel.textContent.toLowerCase().includes(query);
+          panel.classList.toggle('is-filtered-out', !patternMatch);
+          panel.classList.toggle('is-search-hidden', !searchMatch);
+        });
+        document.querySelectorAll('tbody tr').forEach(function (row) {
+          row.classList.toggle('is-search-hidden', Boolean(query) && !row.textContent.toLowerCase().includes(query));
+        });
+      }
+
+      function addPatternTab(label, value) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'pattern-tab' + (value === 'all' ? ' active' : '');
+        button.textContent = label;
+        button.addEventListener('click', function () {
+          selectedPattern = value;
+          patternTabs.querySelectorAll('button').forEach(function (tab) { tab.classList.remove('active'); });
+          button.classList.add('active');
+          applyFilters();
+          practiceHeading.scrollIntoView({ behavior: 'smooth' });
+        });
+        patternTabs.append(button);
+      }
+
+      addPatternTab('All patterns', 'all');
+      practicePanels.forEach(function (panel) {
+        addPatternTab(panel.dataset.pattern, normalizePattern(panel.dataset.pattern));
+      });
+      document.getElementById('study-search').addEventListener('input', applyFilters);
+
+      document.querySelectorAll('pre').forEach(function (pre, index) {
+        const shell = document.createElement('div');
+        shell.className = 'code-shell collapsed';
+        const toolbar = document.createElement('div');
+        toolbar.className = 'code-toolbar';
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'code-toggle';
+        button.textContent = 'Show code';
+        button.setAttribute('aria-expanded', 'false');
+        button.setAttribute('aria-controls', 'code-block-' + index);
+        pre.id = 'code-block-' + index;
+        pre.parentNode.insertBefore(shell, pre);
+        toolbar.append(button);
+        shell.append(toolbar, pre);
+        button.addEventListener('click', function () {
+          const collapsed = shell.classList.toggle('collapsed');
+          button.textContent = collapsed ? 'Show code' : 'Hide code';
+          button.setAttribute('aria-expanded', String(!collapsed));
+        });
+      });
+
+      const storageKey = 'dsa-practice-completed';
+      let completed = {};
+      try { completed = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch (error) { completed = {}; }
+      const progressLabel = document.getElementById('progress-label');
+      const progressFill = document.getElementById('progress-fill');
+      const progressTrack = progressFill.parentElement;
+
+      function updateProgress() {
+        const checks = Array.from(document.querySelectorAll('.practice-check'));
+        const done = checks.filter(function (check) { return check.checked; }).length;
+        const percent = checks.length ? Math.round(done / checks.length * 100) : 0;
+        progressLabel.textContent = done + ' / ' + checks.length;
+        progressFill.style.width = percent + '%';
+        progressTrack.setAttribute('aria-valuenow', String(percent));
+      }
+
+      practicePanels.forEach(function (panel) {
+        panel.querySelectorAll('li').forEach(function (item) {
+          const link = item.querySelector('a');
+          if (!link) return;
+          const check = document.createElement('input');
+          check.type = 'checkbox';
+          check.className = 'practice-check';
+          check.setAttribute('aria-label', 'Mark ' + link.textContent + ' complete');
+          check.checked = Boolean(completed[link.href]);
+          item.classList.toggle('completed', check.checked);
+          item.prepend(check);
+          check.addEventListener('change', function () {
+            if (check.checked) completed[link.href] = true;
+            else delete completed[link.href];
+            localStorage.setItem(storageKey, JSON.stringify(completed));
+            item.classList.toggle('completed', check.checked);
+            updateProgress();
+          });
+        });
+      });
+      updateProgress();
+
+      document.getElementById('theme-button').addEventListener('click', function () {
+        const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = nextTheme;
+      });
+
+      const sidebar = document.getElementById('sidebar');
+      const mobileNavButton = document.getElementById('mobile-nav-button');
+      mobileNavButton.addEventListener('click', function () {
+        const open = sidebar.classList.toggle('open');
+        mobileNavButton.setAttribute('aria-expanded', String(open));
+      });
+    });
+  </script>
+</body>
+</html>
